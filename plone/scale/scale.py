@@ -72,8 +72,6 @@ def scalePILImage(image, width=None, height=None, direction="down"):
     The return value the scaled image in the form of another instance of
     `PIL.Image`.
     """
-    if direction == "keep":
-        direction = "thumbnail"
 
     if direction == "thumbnail" and not (width and height):
         raise ValueError("Thumbnailing requires both width and height to be specified")
@@ -91,6 +89,7 @@ def scalePILImage(image, width=None, height=None, direction="down"):
         image = image.convert("RGB")
 
     current_size = image.size
+
     # Determine scale factor needed to get the right height
     if height is None:
         scale_height = None
@@ -101,7 +100,7 @@ def scalePILImage(image, width=None, height=None, direction="down"):
     else:
         scale_width = (float(width) / float(current_size[0]))
 
-    if scale_height == scale_width or direction == "thumbnail":
+    if (scale_height == scale_width and scale_height < 1) or direction == "thumbnail":
         # The original already has the right aspect ratio, so we only need
         # to scale.
         image.thumbnail((width, height), PIL.Image.ANTIALIAS)
